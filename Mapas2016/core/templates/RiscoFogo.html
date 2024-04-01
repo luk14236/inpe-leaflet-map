@@ -1,0 +1,81 @@
+{% extends "Base.html" %}
+{% block title %}Aeroportos{% endblock %}
+
+{% block content %}
+	<script src="{{ STATIC_URL }}leaflet.js"></script> 
+	<script src="{{ STATIC_URL }}leaflet-src.js"></script> 
+	<script src="{{ STATIC_URL }}leaflet.ajax.min.js"></script> 
+	<link href="{{ STATIC_URL }}leaflet.css" rel="stylesheet" />
+
+	<h2>Queimadas</h2>
+	<small>Segue os links para as visualizações dos tipos de mapas para queimadas</small>
+
+	<div class="col-md-12">
+		<div class="btn-group" role="group">
+		  <a class="btn btn-sm btn-primary btn-default col-md-4" onclick="MapRisco1()"> Risco - 1 dia</a>
+		  <a class="btn btn-sm btn-primary btn-default col-md-4" onclick="MapRisco2()"> Risco - 2 dias</a>
+		  <a class="btn btn-sm btn-primary btn-default col-md-4" onclick="MapRisco3()"> Risco - 3 dias</a>
+		</div>
+	</div>
+
+	<div class="col-md-12" id="map" style="height:800px;"></div>
+
+	<script>
+
+		var map;
+		var host = "http://sigma.cptec.inpe.br/cgi-bin/mapserv?";
+		var mapfile = "map=/extra2/sigma/www/webservice/relatorio_queimadas.map";
+		var wms_server = host + mapfile;
+
+
+		$( document ).ready(function() {
+
+			map = L.map('map').setView([-15.7213868,-48.0786638], 8);
+			map.options.crs = L.CRS.EPSG4326;
+
+			L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
+				maxZoom: 8,
+				attribution: 'Lk1 &copy; <a href="http://openstreetmap.org">Meteorologia</a> Team, ' +
+					'<a href="http://creativecommons.org/licenses/by-sa/2.0/">INPE</a>, ' +
+					'2016',
+				id: 'mapbox.streets'
+			}).addTo(map);
+		});
+
+
+		function MapRisco1()
+		{
+			var nexrad = L.tileLayer.wms(wms_server, {
+			    layers: 'mrp1,mr_car_p0,estados,paises',
+			    version: '1.3.0',
+			    format: 'image/png',
+			    transparent: 'TRUE',
+			    attribution: "INPE"
+			}).addTo(map);
+		}
+
+		function MapRisco2()
+		{
+			var nexrad = L.tileLayer.wms(wms_server, {
+			    layers: 'mrp2,mr_car_p0,estados,paises',
+			    version: '1.3.0',
+			    format: 'image/png',
+			    transparent: 'TRUE',
+			    attribution: "INPE"
+			}).addTo(map);
+		}
+
+		function MapRisco3()
+		{
+			var nexrad = L.tileLayer.wms(wms_server, {
+			    layers: 'mrp3,mr_car_p0,estados,paises',
+			    version: '1.3.0',
+			    format: 'image/png',
+			    transparent: 'TRUE',
+			    attribution: "INPE"
+			}).addTo(map);
+		}
+
+	</script>
+
+{% endblock %}

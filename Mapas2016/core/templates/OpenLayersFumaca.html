@@ -1,0 +1,53 @@
+{% extends "Base.html" %}
+{% block title %}Open Layer Fumaça{% endblock %}
+
+{% block content %}
+	<script src="{{ STATIC_URL }}ol.js"></script> 
+	<link href="{{ STATIC_URL }}ol.css" rel="stylesheet" />
+
+	<h2>Open Layers - Nuvens</h2>
+	<small>Imagens relacionados com a posição e quantidade de Nuvens</small>
+
+	<div class="col-md-12" id="map" style="height:800px;"></div>
+
+	<script>
+
+		var map;
+		var host = "http://sigma.cptec.inpe.br/cgi-bin/mapserv?";
+		var mapfile = "map=/extra2/sigma/www/webservice/relatorio_queimadas.map";
+		var wms_server = host + mapfile;
+
+		$( document ).ready(function() {
+			
+    		var layers = [
+          new ol.layer.Tile({
+            source: new ol.source.TileWMS({
+                url: wms_server,
+                params: {
+                  'LAYERS': 'focos_2dias,pm25,estados,paises'
+                }
+              })
+           })
+      ];
+
+      var map = new ol.Map({
+        controls: ol.control.defaults().extend([
+          new ol.control.ScaleLine({
+            units: 'degrees'
+          })
+        ]),
+        layers: layers,
+        target: 'map',
+        view: new ol.View({
+          projection: 'EPSG:4326',
+          center: [37.41, 8.82],
+          zoom: 5
+        })
+      });
+
+
+		});
+
+	</script>
+
+{% endblock %}

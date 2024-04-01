@@ -1,0 +1,63 @@
+{% extends "Base.html" %}
+{% block title %}Open Layer Aeroportos{% endblock %}
+
+{% block content %}
+	<script src="{{ STATIC_URL }}ol.js"></script> 
+	<link href="{{ STATIC_URL }}ol.css" rel="stylesheet" />
+
+	<h2>Open Layers - Aeroportos</h2>
+	<small>Imagens relacionados com a posição e quantidade de Aeroportos</small>
+
+	<div class="col-md-12" id="map" style="height:800px;"></div>
+
+	<script>
+
+		var map;
+		var host = "http://sigma.cptec.inpe.br/cgi-bin/mapserv?";
+		var mapfile = "map=/extra2/sigma/www/webservice/relatorio_queimadas.map";
+		var wms_server = host + mapfile;
+
+
+//http://sigma.cptec.inpe.br/cgi-bin/mapserv?map=/extra2/sigma/www/webservice/relatorio_queimadas.map&mode=map&srs=epsg:4326&mapsize=440+398&layers=focos_2dias%20goesch4%20estados%20paises&mapext=-82.13+-44+-30.44+12.5
+
+		$( document ).ready(function() {
+
+			var map = new ol.Map({
+		        target: 'map',
+		        layers: [
+		          new ol.layer.Tile({
+		            source: new ol.source.MapQuest({layer: 'sat'})
+		          })
+		        ],
+		        view: new ol.View({
+		          center: ol.proj.fromLonLat([37.41, 8.82]),
+		          zoom: 4
+		        })
+		      });
+
+			var planningAppsSource = new ol.source.Vector({
+			    projection: map.getView().getProjection(),
+			    url: 'http://pnlt.imagem-govfed.opendata.arcgis.com/datasets/be505c8fcdb44dfd8fff083da9496a1f_0.geojson',
+			    format: new ol.format.GeoJSON()
+
+			});
+
+			var planningAppsLayer = new ol.layer.Vector({
+			    source: planningAppsSource,
+			    style: new ol.style.Style({
+			        image: new ol.style.Icon(({
+			            anchor: [0.5, 40],
+			            anchorXUnits: 'fraction',
+			            anchorYUnits: 'pixels',
+			            src: '{{ STATIC_URL }}images/marker-icon.png'
+			        }))
+			    })
+			});
+
+
+			map.addLayer(planningAppsLayer);
+		});
+
+	</script>
+
+{% endblock %}
